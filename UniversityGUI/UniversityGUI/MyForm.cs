@@ -129,7 +129,8 @@ namespace UniversityGUI
                 Text = course,
                 Dock = DockStyle.Top
             });
-            InfoList students = new InfoList("C:\\Users\\Daria\\Source\\Repos\\UniversityGUI\\UniversityGUI\\UniversityGUI\\Students.txt");
+            string path = "C:\\Users\\Daria\\Source\\Repos\\UniversityGUI\\UniversityGUI\\UniversityGUI\\Students.txt";
+            InfoList students = new InfoList(path);
             if (students.Info != null)
             {
                 ListForm studentsOfCourse = new ListForm(3, students.Info.Length);
@@ -161,7 +162,7 @@ namespace UniversityGUI
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
                             float newGrade = float.Parse(dialog.Grade.Text);
-                            students.ChangeGrade(position, newGrade, "C:\\Users\\Daria\\Source\\Repos\\UniversityGUI\\UniversityGUI\\UniversityGUI\\Students.txt");
+                            students.ChangeGrade(position, newGrade, path);
                             SingleCourse(course);
                         }
                         dialog.Dispose();
