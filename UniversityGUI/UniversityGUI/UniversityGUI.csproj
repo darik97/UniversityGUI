@@ -46,15 +46,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ButtonPressedEventArgs.cs" />
     <Compile Include="EditDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ListOfCourses.cs" />
+    <Compile Include="ListOfCoursesForStudent.cs" />
     <Compile Include="ListForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ListOfCoursesForTeacher.cs" />
     <Compile Include="ListOfStudents.cs" />
+    <Compile Include="Microsoft\VisualBasic\Interaction.cs" />
     <Compile Include="MyForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,6 +64,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="EditDialog.resx">
+      <DependentUpon>EditDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -88,6 +92,7 @@
   <ItemGroup>
     <Content Include="SCourses.txt" />
     <Content Include="Students.txt" />
+    <Content Include="TCourses.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

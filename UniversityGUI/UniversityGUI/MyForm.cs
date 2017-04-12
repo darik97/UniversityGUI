@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
-using System.IO;
 
 namespace UniversityGUI
 {
@@ -16,19 +8,13 @@ namespace UniversityGUI
         Label singInLabel;
         Button buttonStudent;
         Button buttonTeacher;
-        TableLayoutPanel studentsTable;
-        ListBox studentsList;
-        ListBox gradesListT;
-        ListBox edit;
         ListOfStudents students;
-        ListOfCourses courses;
-
+        ListOfCoursesForStudent courses;
         Button exitButton = new Button
         {
             Text = "Выход",
             Dock = DockStyle.Bottom
         };
-
 
         public MyForm()
         {
@@ -41,27 +27,27 @@ namespace UniversityGUI
         void SignInAsStudent()
         {
             Controls.Clear();
-            courses = new ListOfCourses("C:\\Users\\Daria\\Source\\Repos\\UniversityGUI\\UniversityGUI\\UniversityGUI\\SCourses.txt");
+            courses = new ListOfCoursesForStudent();
             if (courses.Courses != null)
             {
-                ListForm studentCourses = new ListForm(2, courses.Courses.Count);
-                studentCourses.Table.Controls
+                ListForm coursesForStudent = new ListForm(2, courses.Courses.Count);
+                coursesForStudent.Table.Controls
                     .Add(new Label { Text = "Курс" }, 0, 0);
-                studentCourses.Table.Controls
+                coursesForStudent.Table.Controls
                     .Add(new Label { Text = "Балл" }, 1, 0);
                 for (int i = 1; i <= courses.Courses.Count; i++)
                 {
-                    studentCourses.Table.Controls
+                    coursesForStudent.Table.Controls
                         .Add(new Label
                         {
                             Text = courses.Courses[i - 1],
                             MaximumSize = new Size(200, 0),
                             AutoSize = true
                         }, 0, i);
-                    studentCourses.Table.Controls
+                    coursesForStudent.Table.Controls
                         .Add(new Label { Text = courses.Grades[i - 1] }, 1, i);
                 }
-                Controls.Add(studentCourses.Table);
+                Controls.Add(coursesForStudent.Table);
                 Controls.Add(exitButton);
             }
             else
@@ -86,15 +72,15 @@ namespace UniversityGUI
         public void SignInAsTeacher()
         {
             Controls.Clear();
-            ListOfCourses courses = new ListOfCourses("C:\\Users\\Daria\\Source\\Repos\\UniversityGUI\\UniversityGUI\\UniversityGUI\\SCourses.txt");
+            ListOfCoursesForTeacher courses = new ListOfCoursesForTeacher();
             if (courses.Courses != null)
             {
-                ListForm teacherCourses = new ListForm(1, courses.Courses.Count);
-                teacherCourses.Table.Controls
+                ListForm coursesForTeacher = new ListForm(1, courses.Courses.Length);
+                coursesForTeacher.Table.Controls
                     .Add(new Label { Text = "Список курсов" }, 0, 0);
 
-                LinkLabel[] links = new LinkLabel[courses.Courses.Count];
-                for (int i = 0; i < courses.Courses.Count; i++)
+                LinkLabel[] links = new LinkLabel[courses.Courses.Length];
+                for (int i = 0; i < courses.Courses.Length; i++)
                 {
                     links[i] = new LinkLabel()
                     {
@@ -103,15 +89,14 @@ namespace UniversityGUI
                         AutoSize = true
                     };
                     links[i].Links[0].LinkData = courses.Courses[i];
-                    teacherCourses.Table.Controls
+                    coursesForTeacher.Table.Controls
                         .Add(links[i], 0, i + 1);
                     links[i].LinkClicked += (sender, e) =>
                     {
-                        string s = e.Link.LinkData as string;
-                        TeacherCourse(s);
+                        SingleCourse(e.Link.LinkData as string);
                     };
                 }
-                Controls.Add(teacherCourses.Table);
+                Controls.Add(coursesForTeacher.Table);
                 Controls.Add(exitButton);
             }
             else
@@ -134,7 +119,7 @@ namespace UniversityGUI
         }
 
 
-        public void TeacherCourse(string course)
+        public void SingleCourse(string course)
         {
             Controls.Clear();
             Controls.Add(new Label
@@ -142,34 +127,43 @@ namespace UniversityGUI
                 Text = course,
                 Dock = DockStyle.Top
             });
-            ListOfStudents studentsL = new ListOfStudents();
-            if (studentsL.Students != null)
+            ListOfStudents students = new ListOfStudents();
+            if (students.Students != null)
             {
-                ListForm studentsOfCourse = new ListForm(3, studentsL.Students.Count);
+                ListForm studentsOfCourse = new ListForm(3, students.Students.Count);
                 studentsOfCourse.Table.Controls
                     .Add(new Label { Text = "Студент" }, 0, 0);
                 studentsOfCourse.Table.Controls
                     .Add(new Label { Text = "Балл" }, 1, 0);
 
-                Button[] edit = new Button[studentsL.Students.Count];
-                for (int i = 0; i < studentsL.Students.Count; i++)
+                Button[] edit = new Button[students.Students.Count];
+                for (int i = 0; i < students.Students.Count; i++)
                 {
                     studentsOfCourse.Table.Controls
                         .Add(new Label
                         {
-                            Text = studentsL.Students[i],
+                            Text = students.Students[i],
                             MaximumSize = new Size(200, 0),
                             AutoSize = true
                         }, 0, i + 1);
                     studentsOfCourse.Table.Controls
-                        .Add(new Label { Text = studentsL.Grades[i] }, 1, i + 1);
+                        .Add(new Label { Text = students.Grades[i].ToString(".00") }, 1, i + 1);
                     studentsOfCourse.Table.Controls
                         .Add(edit[i] = new Button { Text = "Edit" }, 2, i + 1);
-                    ButtonPressedEventArgs args = new ButtonPressedEventArgs();
-                    args.Name = studentsL.Students[i];
-                    args.Grade = studentsL.Grades[i];
-                    args.Position = i;
-                    //edit[i].Click += OnButtonPressed(this, args);
+                    string name = students.Students[i];
+                    float grade = students.Grades[i];
+                    int position = i;
+                    edit[i].Click += (sender, e) =>
+                    {
+                        EditDialog dialog = new EditDialog(name, grade);
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                        {
+                            students.Grades[position] = float.Parse(dialog.Grade.Text);
+                            students.ChangeGrade(students.Students, students.Grades);
+                            SingleCourse(course);
+                        }
+                        dialog.Dispose();
+                    };
                 }
                 Controls.Add(studentsOfCourse.Table);
                 Controls.Add(exitButton);
@@ -189,39 +183,6 @@ namespace UniversityGUI
                 SignInAsTeacher();
             };
         }
-
-        public void EditGrages(ButtonPressedEventArgs student)
-        {
-            string newGrade;
-            ListOfStudents list = new ListOfStudents();
-            EditDialog dialog = new EditDialog(student.Name, student.Grade);
-
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-            {
-                newGrade = dialog.Grade.Text;
-                list.ChangeGrade(newGrade, student.Position);
-            }
-            dialog.Dispose();
-        }
-
-
-        private EventHandler OnButtonPressed(object sender, ButtonPressedEventArgs e)
-        {
-            if (ButtonPressed != null)
-            {
-                string name = e.Name;
-                SignInAsTeacher();
-            }
-            throw new NotImplementedException();
-        }
-
-        protected virtual void OnButtonPressed(ButtonPressedEventArgs e)
-        {
-            ButtonPressed?.Invoke(this, e);
-        }
-
-        public event EventHandler<ButtonPressedEventArgs> ButtonPressed;
-        
     }
 }
 

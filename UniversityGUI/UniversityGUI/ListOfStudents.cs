@@ -10,31 +10,36 @@ namespace UniversityGUI
     class ListOfStudents
     {
         public List<string> Students = new List<string>();
-        public List<string> Grades = new List<string>();
+        public List<float> Grades = new List<float>();
         string path = "C:\\Users\\Daria\\Source\\Repos\\UniversityGUI\\UniversityGUI\\UniversityGUI\\Students.txt";
 
         public ListOfStudents()
         {
-            try
+            if (File.Exists(path))
             {
                 string[] readText = File.ReadAllLines(path);
-                string[] temp = new string[3];
+                string[] temp = new string[2];
                 for (int i = 0; i < readText.Length; i++)
                 {
-                    temp = readText[i].Split(' ');
-                    Students.Add(temp[0] + ' ' + temp[1]);
-                    Grades.Add(temp[2]);
+                    temp = readText[i].Split(';');
+                    Students.Add(temp[0]);
+                    Grades.Add(float.Parse(temp[1]));
                 }
             }
-            catch (FileNotFoundException)
-            { }
+            else
+            {
+                throw new FileNotFoundException();
+            }
         }
 
-        public void ChangeGrade(string newGrade, int position)
+        public void ChangeGrade(List<string> name, List<float> grade)
         {
-            string[] readText = File.ReadAllLines(path);
-            readText[position] = newGrade;
-            File.WriteAllLines(path, readText);
+            string[] text = new string[name.Count];
+            for (int i = 0; i < name.Count; i++)
+            {
+                text[i] = name[i] + "; " + grade[i];
+            }
+            File.WriteAllLines(path, text);
         }
-    }    
+    }
 }

@@ -1,4 +1,6 @@
-﻿namespace UniversityGUI
+﻿using System.Windows.Forms;
+
+namespace UniversityGUI
 {
     partial class MyForm
     {
@@ -22,26 +24,33 @@
 
         private void InitializeComponent()
         {
-            this.singInLabel = new System.Windows.Forms.Label();
-            this.singInLabel.Text = "Войти в систему как";
-            this.singInLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            singInLabel = new Label
+            {
+                Text = "Войти в систему как",
+                Dock = DockStyle.Fill
+            };
 
-            this.buttonStudent = new System.Windows.Forms.Button();
-            this.buttonStudent.Text = "Студент";
-            this.buttonStudent.Dock = System.Windows.Forms.DockStyle.Fill;
+            buttonStudent = new Button
+            {
+                Text = "Студент",
+                Dock = DockStyle.Fill
+            };
 
-            this.buttonTeacher = new System.Windows.Forms.Button();
-            this.buttonTeacher.Text = "Преподаватель";
-            this.buttonTeacher.Dock = System.Windows.Forms.DockStyle.Fill;
+            buttonTeacher = new Button
+            {
+                Text = "Преподаватель",
+                Dock = DockStyle.Fill
+            };
 
-            var table = new System.Windows.Forms.TableLayoutPanel();
-            table.RowStyles.Clear();
-            table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50));
-            table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30));
-            table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30));
-            table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30));
-            table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50));
-            table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100));
+            var table = new TableLayoutPanel();
+            table.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+            for (int i = 0; i < 3; i++)
+            {
+                table.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
+            }
+            table.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            table.Dock = DockStyle.Fill;
 
             table.Controls.Add(new System.Windows.Forms.Panel(), 0, 0);
             table.Controls.Add(singInLabel, 0, 1);
@@ -49,7 +58,6 @@
             table.Controls.Add(buttonTeacher, 0, 3);
             table.Controls.Add(new System.Windows.Forms.Panel(), 0, 4);
 
-            table.Dock = System.Windows.Forms.DockStyle.Fill;
             Controls.Add(table);
         }
     }
