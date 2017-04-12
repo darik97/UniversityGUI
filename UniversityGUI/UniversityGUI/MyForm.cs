@@ -8,8 +8,7 @@ namespace UniversityGUI
         Label singInLabel;
         Button buttonStudent;
         Button buttonTeacher;
-        ListOfStudents students;
-        ListOfCoursesForStudent courses;
+        InfoList courses;
         Button exitButton = new Button
         {
             Text = "Выход",
@@ -27,25 +26,28 @@ namespace UniversityGUI
         void SignInAsStudent()
         {
             Controls.Clear();
-            courses = new ListOfCoursesForStudent();
-            if (courses.Courses != null)
+            courses = new InfoList("C:\\Users\\Daria\\Source\\Repos\\UniversityGUI\\UniversityGUI\\UniversityGUI\\SCourses.txt");
+            if (courses.Info != null)
             {
-                ListForm coursesForStudent = new ListForm(2, courses.Courses.Count);
+                ListForm coursesForStudent = new ListForm(2, courses.Info.Length);
                 coursesForStudent.Table.Controls
                     .Add(new Label { Text = "Курс" }, 0, 0);
                 coursesForStudent.Table.Controls
                     .Add(new Label { Text = "Балл" }, 1, 0);
-                for (int i = 1; i <= courses.Courses.Count; i++)
+                for (int i = 1; i <= courses.Info.Length; i++)
                 {
                     coursesForStudent.Table.Controls
                         .Add(new Label
                         {
-                            Text = courses.Courses[i - 1],
+                            Text = courses.Info[i - 1].Item1,
                             MaximumSize = new Size(200, 0),
                             AutoSize = true
                         }, 0, i);
                     coursesForStudent.Table.Controls
-                        .Add(new Label { Text = courses.Grades[i - 1] }, 1, i);
+                        .Add(new Label
+                        {
+                            Text = courses.Info[i - 1].Item2.ToString(".00")
+                        }, 1, i);
                 }
                 Controls.Add(coursesForStudent.Table);
                 Controls.Add(exitButton);
@@ -127,39 +129,39 @@ namespace UniversityGUI
                 Text = course,
                 Dock = DockStyle.Top
             });
-            ListOfStudents students = new ListOfStudents();
-            if (students.Students != null)
+            InfoList students = new InfoList("C:\\Users\\Daria\\Source\\Repos\\UniversityGUI\\UniversityGUI\\UniversityGUI\\Students.txt");
+            if (students.Info != null)
             {
-                ListForm studentsOfCourse = new ListForm(3, students.Students.Count);
+                ListForm studentsOfCourse = new ListForm(3, students.Info.Length);
                 studentsOfCourse.Table.Controls
                     .Add(new Label { Text = "Студент" }, 0, 0);
                 studentsOfCourse.Table.Controls
                     .Add(new Label { Text = "Балл" }, 1, 0);
 
-                Button[] edit = new Button[students.Students.Count];
-                for (int i = 0; i < students.Students.Count; i++)
+                Button[] edit = new Button[students.Info.Length];
+                for (int i = 0; i < students.Info.Length; i++)
                 {
                     studentsOfCourse.Table.Controls
                         .Add(new Label
                         {
-                            Text = students.Students[i],
+                            Text = students.Info[i].Item1,
                             MaximumSize = new Size(200, 0),
                             AutoSize = true
                         }, 0, i + 1);
                     studentsOfCourse.Table.Controls
-                        .Add(new Label { Text = students.Grades[i].ToString(".00") }, 1, i + 1);
+                        .Add(new Label { Text = students.Info[i].Item2.ToString(".00") }, 1, i + 1);
                     studentsOfCourse.Table.Controls
                         .Add(edit[i] = new Button { Text = "Edit" }, 2, i + 1);
-                    string name = students.Students[i];
-                    float grade = students.Grades[i];
+                    string name = students.Info[i].Item1;
+                    float grade = students.Info[i].Item2;
                     int position = i;
                     edit[i].Click += (sender, e) =>
                     {
                         EditDialog dialog = new EditDialog(name, grade);
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            students.Grades[position] = float.Parse(dialog.Grade.Text);
-                            students.ChangeGrade(students.Students, students.Grades);
+                            float newGrade = float.Parse(dialog.Grade.Text);
+                            students.ChangeGrade(position, newGrade, "C:\\Users\\Daria\\Source\\Repos\\UniversityGUI\\UniversityGUI\\UniversityGUI\\Students.txt");
                             SingleCourse(course);
                         }
                         dialog.Dispose();
