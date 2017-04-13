@@ -56,7 +56,7 @@ namespace UniversityGUI
             {
                 Controls.Add(new Label
                 {
-                    Text = "Не удалось найти файл",
+                    Text = "Не удалось получить список",
                     Dock = DockStyle.Fill
                 });
                 Controls.Add(exitButton);
@@ -105,7 +105,7 @@ namespace UniversityGUI
             {
                 Controls.Add(new Label
                 {
-                    Text = "Не удалось найти файл",
+                    Text = "Не удалось получить список",
                     Dock = DockStyle.Fill
                 });
                 Controls.Add(exitButton);
@@ -161,7 +161,8 @@ namespace UniversityGUI
                         EditDialog dialog = new EditDialog(name, grade);
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            float newGrade = float.Parse(dialog.Grade.Text);
+                            float newGrade; 
+                            float.TryParse(dialog.Grade.Text, out newGrade);
                             students.ChangeGrade(position, newGrade, path);
                             SingleCourse(course);
                         }
